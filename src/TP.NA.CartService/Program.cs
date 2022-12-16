@@ -1,3 +1,7 @@
+using TP.NA.CartService.Data;
+using TP.NA.CartService.Models;
+
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -16,29 +20,39 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
+app.MapGet("/v1/cartService", () =>
 {
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast = Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
+    return Results.Ok(CartStore.LstCart);
 })
-.WithName("GetWeatherForecast")
+.WithName("GetCartService")
 .WithOpenApi();
+
+
+app.MapGet("/v1/cartService/{id:int}", (int id) =>
+{
+    return Results.Ok(CartStore.LstCart.Find(x => x.Id == id));
+})
+.WithName("GetCartServiceId")
+.WithOpenApi();
+
+app.MapPost("/v1/cartService/", (Cart CartObj) =>
+{
+    var id = CartStore.LstCart.OrderByDescending(x => x.Id).FirstOrDefault().Id + 1;
+    CartObj.Id = id;
+    CartStore.LstCart.Add(CartObj);
+    return Results.Ok(CartObj);
+}
+).WithName("PostCartServiceAddProduct")
+.WithOpenApi();
+
+app.MapDelete("/v1/cartService/{id:int}", (int id) =>
+{
+    Cart cartItem = CartStore.LstCart.Find(x => x.Id == id);
+    CartStore.LstCart.Remove(cartItem);
+    return Results.Ok(cartItem);
+})
+.WithName("GetCartServiceIdRemoveProduct")
+.WithOpenApi(); 
 
 app.Run();
 
-internal record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
