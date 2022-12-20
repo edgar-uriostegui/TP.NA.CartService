@@ -1,6 +1,6 @@
 using TP.NA.CartService.Data;
 using TP.NA.CartService.Models;
-
+using TP.NA.CartService.Models.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +20,11 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+#region Cart management
+
+
+
+
 app.MapGet("/v1/cartService", () =>
 {
     return Results.Ok(CartStore.LstCart);
@@ -28,11 +33,18 @@ app.MapGet("/v1/cartService", () =>
 .WithOpenApi();
 
 
-app.MapGet("/v1/cartService/{id:int}", (int id) =>
+app.MapGet("/v1/cartService/{id:int}", (int cartId) =>
 {
-    return Results.Ok(CartStore.LstCart.Find(x => x.Id == id));
+    return Results.Ok(CartStore.LstCart.Find(x => x.Id == cartId));
 })
 .WithName("GetCartServiceId")
+.WithOpenApi();
+
+app.MapGet("/v1/cartService/{userId:int}", (int userId) =>
+{
+    return Results.Ok(CartStore.LstCart.Find(x => x.UserId == userId));
+})
+.WithName("GetCartServiceByUserId")
 .WithOpenApi();
 
 app.MapPost("/v1/cartService/", (Cart CartObj) =>
@@ -42,17 +54,38 @@ app.MapPost("/v1/cartService/", (Cart CartObj) =>
     CartStore.LstCart.Add(CartObj);
     return Results.Ok(CartObj);
 }
-).WithName("PostCartServiceAddProduct")
+).WithName("CartServiceCreateCart")
 .WithOpenApi();
 
-app.MapDelete("/v1/cartService/{id:int}", (int id) =>
+#endregion
+
+#region ManageProducts
+
+app.MapPost("/v1/cartService/{cartId:int}", (int CartId, Product product) =>
 {
-    Cart cartItem = CartStore.LstCart.Find(x => x.Id == id);
-    CartStore.LstCart.Remove(cartItem);
-    return Results.Ok(cartItem);
-})
-.WithName("GetCartServiceIdRemoveProduct")
-.WithOpenApi(); 
+    var cart = CartStore.LstCart.FirstOrDefault(c => c.Id == CartId);
+
+    cart.Products.Add(product);
+
+    return Results.Ok(cart);
+}
+).WithName("CartServiceAddProduct")
+.WithOpenApi();
+
+app.MapPost("/v1/cartService/{cartId:int}/{productId:int}", (int CartId, int ProductId) =>
+{
+    var cart = CartStore.LstCart.FirstOrDefault(c => c.Id == CartId);
+    var product = CartStore.LstCart.FirstOrDefault(c => c.Id == CartId).Products.FirstOrDefault(x => x.ID == ProductId);
+
+
+    cart.Products.Remove(product);
+
+    return Results.Ok(cart);
+}
+).WithName("CartServiceRemoveProduct")
+.WithOpenApi();
+
+#endregion
 
 app.Run();
 

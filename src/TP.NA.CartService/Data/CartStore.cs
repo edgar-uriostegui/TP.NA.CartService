@@ -1,5 +1,6 @@
 ﻿using System;
 using TP.NA.CartService.Models;
+using TP.NA.CartService.Models.Models;
 
 namespace TP.NA.CartService.Data
 {
@@ -11,14 +12,47 @@ namespace TP.NA.CartService.Data
             {
                 Id = 1,
                 CartCreate = DateTime.Now,
-                Productid = 1,
-                ProductQuantity = 1,
+                UserId = 1,
+                Products = new List<Product>
+                {
+                    new Product
+                    {
+                        Quantity= 1,
+                        Price= 1,
+                        Name = "aaaaa",
+                        ID = 1
+                    },
+                    new Product
+                    {
+                        Quantity= 1,
+                        Price= 1,
+                        Name = "eeeee",
+                        ID = 1
+                    }
+                }
             },
-            new Cart {
+            new Cart
+            {
                 Id = 2,
                 CartCreate = DateTime.Now,
-                Productid = 2,
-                ProductQuantity = 10,
+                UserId = 2,
+                Products = new List<Product>
+                {
+                    new Product
+                    {
+                        Quantity= 1,
+                        Price= 1,
+                        ID= 1,
+                        Name = "SSSS"
+                    },
+                    new Product
+                    {
+                        Quantity= 3,
+                        Name = "AAAA",
+                        ID = 2,
+                        Price = 11
+                    }
+                }
             }
         };
     }
