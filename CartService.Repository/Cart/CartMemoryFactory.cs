@@ -30,7 +30,7 @@ namespace CartService.Repository.Cart
                         Quantity= 1,
                         Cost= 1,
                         Name = "eeeee",
-                        Id = 1
+                        Id = 2
                     }
                 }
             },
@@ -45,14 +45,14 @@ namespace CartService.Repository.Cart
                     {
                         Quantity= 1,
                         Cost= 1,
-                        Id= 1,
+                        Id= 55,
                         Name = "SSSS"
                     },
                     new ProductEntity
                     {
                         Quantity= 3,
                         Name = "AAAA",
-                        Id = 2,
+                        Id = 12,
                         Cost = 11
                     }
                 }

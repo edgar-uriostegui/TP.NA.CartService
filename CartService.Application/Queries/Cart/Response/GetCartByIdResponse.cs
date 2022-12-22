@@ -6,7 +6,7 @@
     /// <summary>
     /// Get cart by id
     /// </summary>
-    public class GetCartById : BaseResponse
+    public class GetCartByIdResponse 
     {
         /// <summary>
         /// Gets or sets cart

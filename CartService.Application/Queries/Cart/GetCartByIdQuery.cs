@@ -8,32 +8,31 @@
     using CartService.Application.Models;
     using CartService.Application.Queries.Cart.Request;
     using CartService.Application.Queries.Cart.Response;
-    using CartService.Domain.Entities;
     using Microsoft.AspNetCore.Http;
 
     /// <summary>
-    /// Get all carts query
+    /// Get cart by id query
     /// </summary>
-    public class GetAllCartsQuery
+    public class GetCartByIdQuery
     {
         #region Result
 
         /// <summary>
-        /// Get all carts result
+        /// Get cart by id result
         /// </summary>
-        public class ResultGetAllCarts
+        public class ResultGetCartById
         {
             /// <summary>
-            /// Gets or sets get all carts response
+            /// Gets or sets cart by id response
             /// </summary>
-            public GetAllCartsResponse GetAllCartsReponse { get; set; }
+            public GetCartByIdResponse GetCartByIdResponse { get; set; }
 
             /// <summary>
-            /// Create a all carts response
+            /// Create a new result
             /// </summary>
-            public ResultGetAllCarts()
+            public ResultGetCartById()
             {
-                GetAllCartsReponse = new GetAllCartsResponse();
+                GetCartByIdResponse = new GetCartByIdResponse();
             }
         }
 
@@ -42,50 +41,53 @@
         #region Query
 
         /// <summary>
-        /// Get all carts query
+        /// Get cart by id query class
         /// </summary>
-        public class Query : IQuery<Response<ResultGetAllCarts>>
+        public class Query : IQuery<Response<ResultGetCartById>>
         {
             /// <summary>
-            /// Get all carts request
+            /// Gets or sets get cart by id request
             /// </summary>
-            public GetAllCartsRequest Request { get; set; }
+            public GetCartByIdRequest Request { get; set; } = new GetCartByIdRequest();
         }
 
         #endregion Query
 
         #region Handler
 
-        public class Handler : IQueryHandler<Query, Response<ResultGetAllCarts>>
+        /// <summary>
+        /// Get cart by id handler
+        /// </summary>
+        public class Handler : IQueryHandler<Query, Response<ResultGetCartById>>
         {
             private readonly IMapper _mapper;
 
             private readonly ICartRepository _cartRepository;
 
-            private readonly Response<ResultGetAllCarts> _response;
+            private readonly Response<ResultGetCartById> _response;
 
             public Handler(IMapper mapper, ICartRepository cartRepository)
             {
                 _mapper = mapper;
                 _cartRepository = cartRepository;
-                _response = new Response<ResultGetAllCarts>
+                _response = new Response<ResultGetCartById>
                 {
-                    Payload = new ResultGetAllCarts()
+                    Payload = new ResultGetCartById()
                 };
             }
 
-            public async Task<Response<ResultGetAllCarts>> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<Response<ResultGetCartById>> Handle(Query request, CancellationToken cancellationToken)
             {
                 try
                 {
-                    var result = await _cartRepository.GetAllAsync();
+                    var result = await _cartRepository.GetByIdAsync(request.Request.Id);
 
-                    _response.Payload.GetAllCartsReponse.Carts = _mapper.Map<IEnumerable<CartModel>>(result);
+                    _response.Payload.GetCartByIdResponse.Cart = _mapper.Map<CartModel>(result);
                 }
                 catch (Exception ex)
                 {
-                    _response.SetFailureResponse("Get all carts", $"An error was throw trying to get all the carts");
-                    _response.Payload.GetAllCartsReponse.StatusCode = StatusCodes.Status500InternalServerError;
+                    _response.SetFailureResponse("Get cart by id", $"An error was throw trying to the specific cart");
+                    _response.StatusCode = StatusCodes.Status500InternalServerError;
                 }
 
                 return _response;

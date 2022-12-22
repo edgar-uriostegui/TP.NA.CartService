@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,6 +14,9 @@ namespace CartService.Application.Commons
     /// </summary>
     public interface IResponse
     {
+
+        int StatusCode { get; set; } 
+
         /// <summary>
         /// Indicate if has error
         /// </summary>
@@ -42,6 +46,11 @@ namespace CartService.Application.Commons
         /// List of errors
         /// </summary>
         public List<ValidationMessage> Errors { get; set; }
+
+        /// <summary>
+        /// Gets or sets status code
+        /// </summary>
+        public int StatusCode { get; set; } = StatusCodes.Status200OK;
 
         /// <summary>
         /// Set a failure response
